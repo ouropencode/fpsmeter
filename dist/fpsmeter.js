@@ -1,6 +1,6 @@
 /*!
- * FPSMeter 0.3.1 - 9th May 2013
- * https://github.com/Darsain/fpsmeter
+ * fpsmeter 0.3.1 - 2nd Oct 2017
+ * https://github.com/darsain/fpsmeter
  *
  * Licensed under the MIT license.
  * http://opensource.org/licenses/MIT
@@ -47,11 +47,11 @@
 		if (value == null) {
 			return String(value);
 		}
-
 		if (typeof value === 'object' || typeof value === 'function') {
-			return Object.prototype.toString.call(value).match(/\s([a-z]+)/i)[1].toLowerCase() || 'object';
+			return (value instanceof w.NodeList && 'nodelist') ||
+				(value instanceof w.HTMLCollection && 'htmlcollection') ||
+				Object.prototype.toString.call(value).match(/\s([a-z]+)/i)[1].toLowerCase();
 		}
-
 		return typeof value;
 	}
 
@@ -92,7 +92,11 @@
 			if (args[1].hasOwnProperty(key)) {
 				switch (type(args[1][key])) {
 					case 'object':
-						args[0][key] = extend({}, args[0][key], args[1][key]);
+						if (type(args[0][key]) === 'object') {
+							extend(args[0][key], args[1][key]);
+						} else {
+							args[0][key] = extend({}, args[1][key]);
+						}
 						break;
 
 					case 'array':
@@ -441,7 +445,7 @@
 			// Update legend only when changed
 			if (el.legend.fps !== showFps) {
 				el.legend.fps = showFps;
-				el.legend[textProp] = showFps ? 'FPS' : 'ms';
+				el.legend[textProp] = showFps ? o.labelFps : o.labelMs;
 			}
 			// Update counter with a nicely formated & readable number
 			count = showFps ? self.fps : self.duration;
@@ -692,8 +696,11 @@
 		heat:  0,      // Allow themes to use coloring by FPS heat. 0 FPS = red, maxFps = green.
 
 		// Graph
-		graph:   0, // Whether to show history graph.
-		history: 20 // How many history states to show in a graph.
+		graph:   0,  // Whether to show history graph.
+		history: 20, // How many history states to show in a graph.
+		
+		labelFps: 'FPS', // The label to present when showing FPS.s
+		labelMs:  'ms'   // The label to present when showing MSs.
 	};
 
 	// Option names that trigger FPSMeter rebuild or reposition when modified
