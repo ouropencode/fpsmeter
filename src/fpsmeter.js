@@ -692,7 +692,7 @@
 		graph:   0,  // Whether to show history graph.
 		history: 20, // How many history states to show in a graph.
 		
-		labelFps: 'FPS', // The label to present when showing FPS.s
+		labelFps: 'FPS', // The label to present when showing FPS.
 		labelMs:  'ms'   // The label to present when showing MSs.
 	};
 
